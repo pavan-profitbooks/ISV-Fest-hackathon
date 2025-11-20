@@ -13,10 +13,32 @@ rails new personal_expense_tracker
 cd personal_expense_tracker
 
 # Add required gems to Gemfile
+bundle add bcrypt
 bundle add bootstrap
 bundle add sassc-rails
 bundle add font-awesome-sass
 bundle add simple_form
+
+Copy
+
+Insert at cursor
+ruby
+Routes Configuration
+# config/routes.rb
+Rails.application.routes.draw do
+  root 'expenses#index'
+  
+  # Authentication routes
+  get 'signup', to: 'users#new'
+  post 'signup', to: 'users#create'
+  get 'login', to: 'sessions#new'
+  post 'login', to: 'sessions#create'
+  delete 'logout', to: 'sessions#destroy'
+  
+  resources :vendors
+  resources :receipts, only: [:index, :show, :new, :create]
+  resources :expenses, only: [:index, :show, :edit, :update]
+end
 
 Copy
 
@@ -41,11 +63,26 @@ Insert at cursor
 ruby
 Database Schema & Models
 # Generate models
-rails g model Vendor name:string address:text phone:string email:string tax_identifier:string
-rails g model Category name:string description:text
-rails g model Rule pattern:string category:references amount_threshold:decimal
-rails g model Receipt merchant:string amount:decimal date:date image:string notes:text vendor:references
-rails g model Expense amount:decimal date:date description:text category:references receipt:references vendor:references status:integer
+rails g model User username:string email:string password_digest:string
+rails g model Vendor name:string address:text phone:string email:string tax_identifier:string user:references
+rails g model Category name:string description:text user:references
+rails g model Rule pattern:string category:references amount_threshold:decimal user:references
+rails g model Receipt merchant:string amount:decimal date:date image:string notes:text vendor:references user:references
+rails g model Expense amount:decimal date:date description:text category:references receipt:references vendor:references status:integer user:references
+
+# db/migrate/YYYYMMDDHHMMSS_create_users.rb
+class CreateUsers < ActiveRecord::Migration[8.0]
+  def change
+    create_table :users do |t|
+      t.string :username, null: false
+      t.string :email, null: false
+      t.string :password_digest, null: false
+      t.timestamps
+    end
+    add_index :users, :username, unique: true
+    add_index :users, :email, unique: true
+  end
+end
 
 # db/migrate/YYYYMMDDHHMMSS_create_vendors.rb
 class CreateVendors < ActiveRecord::Migration[8.0]
@@ -56,6 +93,7 @@ class CreateVendors < ActiveRecord::Migration[8.0]
       t.string :phone
       t.string :email
       t.string :tax_identifier
+      t.references :user, null: false, foreign_key: true
       t.timestamps
     end
     add_index :vendors, :name
@@ -69,9 +107,10 @@ class CreateCategories < ActiveRecord::Migration[8.0]
     create_table :categories do |t|
       t.string :name, null: false
       t.text :description
+      t.references :user, null: false, foreign_key: true
       t.timestamps
     end
-    add_index :categories, :name, unique: true
+    add_index :categories, [:name, :user_id], unique: true
   end
 end
 
@@ -81,6 +120,7 @@ class CreateRules < ActiveRecord::Migration[8.0]
     create_table :rules do |t|
       t.string :pattern, null: false
       t.references :category, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true
       t.decimal :amount_threshold, precision: 10, scale: 2
       t.timestamps
     end
@@ -97,6 +137,7 @@ class CreateReceipts < ActiveRecord::Migration[8.0]
       t.string :image
       t.text :notes
       t.references :vendor, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true
       t.timestamps
     end
     add_index :receipts, :date
@@ -114,6 +155,7 @@ class CreateExpenses < ActiveRecord::Migration[8.0]
       t.references :category, null: false, foreign_key: true
       t.references :receipt, null: false, foreign_key: true
       t.references :vendor, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true
       t.integer :status, default: 0
       t.timestamps
     end
@@ -127,8 +169,27 @@ Copy
 Insert at cursor
 ruby
 Model Definitions
+# app/models/user.rb
+class User < ApplicationRecord
+  has_secure_password
+  
+  has_many :vendors, dependent: :destroy
+  has_many :categories, dependent: :destroy
+  has_many :rules, dependent: :destroy
+  has_many :receipts, dependent: :destroy
+  has_many :expenses, dependent: :destroy
+  
+  validates :username, presence: true, uniqueness: true, length: { minimum: 3, maximum: 50 }
+  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  
+  def to_s
+    username
+  end
+end
+
 # app/models/vendor.rb
 class Vendor < ApplicationRecord
+  belongs_to :user
   has_many :receipts, dependent: :destroy
   has_many :expenses, dependent: :destroy
   
@@ -142,10 +203,11 @@ end
 
 # app/models/category.rb
 class Category < ApplicationRecord
+  belongs_to :user
   has_many :rules, dependent: :destroy
   has_many :expenses, dependent: :restrict_with_error
   
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: { scope: :user_id }
   
   def to_s
     name
@@ -155,6 +217,7 @@ end
 # app/models/rule.rb
 class Rule < ApplicationRecord
   belongs_to :category
+  belongs_to :user
   
   validates :pattern, presence: true
   validates :amount_threshold, numericality: { greater_than: 0 }, allow_nil: true
@@ -163,6 +226,7 @@ end
 # app/models/receipt.rb
 class Receipt < ApplicationRecord
   belongs_to :vendor
+  belongs_to :user
   has_one :expense, dependent: :destroy
   has_one_attached :image
   
@@ -180,15 +244,16 @@ class Receipt < ApplicationRecord
       amount: amount,
       date: date,
       description: "Expense from receipt #{merchant} - #{date}",
-      category: category || Category.find_or_create_by!(name: 'Uncategorized'),
+      category: category || user.categories.find_or_create_by!(name: 'Uncategorized'),
       receipt: self,
       vendor: vendor,
+      user: user,
       status: :pending
     )
   end
   
   def determine_category
-    Rule.includes(:category).find do |rule|
+    user.rules.includes(:category).find do |rule|
       merchant.downcase.match?(rule.pattern.downcase) ||
         (rule.amount_threshold && amount >= rule.amount_threshold)
     end&.category
@@ -200,6 +265,7 @@ class Expense < ApplicationRecord
   belongs_to :category
   belongs_to :receipt
   belongs_to :vendor
+  belongs_to :user
   
   enum status: { pending: 0, approved: 1, rejected: 2 }
   
@@ -216,12 +282,83 @@ Copy
 Insert at cursor
 ruby
 Controllers
+# app/controllers/application_controller.rb
+class ApplicationController < ActionController::Base
+  before_action :require_login
+  helper_method :current_user, :logged_in?
+  
+  private
+  
+  def current_user
+    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+  end
+  
+  def logged_in?
+    !!current_user
+  end
+  
+  def require_login
+    unless logged_in?
+      redirect_to login_path, alert: 'Please log in to continue.'
+    end
+  end
+end
+
+# app/controllers/sessions_controller.rb
+class SessionsController < ApplicationController
+  skip_before_action :require_login, only: [:new, :create]
+  
+  def new
+  end
+  
+  def create
+    user = User.find_by(email: params[:email])
+    if user&.authenticate(params[:password])
+      session[:user_id] = user.id
+      redirect_to root_path, notice: 'Logged in successfully!'
+    else
+      flash.now[:alert] = 'Invalid email or password'
+      render :new, status: :unprocessable_entity
+    end
+  end
+  
+  def destroy
+    session[:user_id] = nil
+    redirect_to login_path, notice: 'Logged out successfully!'
+  end
+end
+
+# app/controllers/users_controller.rb
+class UsersController < ApplicationController
+  skip_before_action :require_login, only: [:new, :create]
+  
+  def new
+    @user = User.new
+  end
+  
+  def create
+    @user = User.new(user_params)
+    if @user.save
+      session[:user_id] = @user.id
+      redirect_to root_path, notice: 'Account created successfully!'
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+  
+  private
+  
+  def user_params
+    params.require(:user).permit(:username, :email, :password, :password_confirmation)
+  end
+end
+
 # app/controllers/vendors_controller.rb
 class VendorsController < ApplicationController
   before_action :set_vendor, only: [:show, :edit, :update, :destroy]
 
   def index
-    @vendors = Vendor.all
+    @vendors = current_user.vendors
   end
 
   def show
@@ -235,7 +372,7 @@ class VendorsController < ApplicationController
   end
 
   def create
-    @vendor = Vendor.new(vendor_params)
+    @vendor = current_user.vendors.new(vendor_params)
     if @vendor.save
       redirect_to vendors_path, notice: 'Vendor was successfully created.'
     else
@@ -259,7 +396,7 @@ class VendorsController < ApplicationController
   private
 
   def set_vendor
-    @vendor = Vendor.find(params[:id])
+    @vendor = current_user.vendors.find(params[:id])
   end
 
   def vendor_params
@@ -272,7 +409,7 @@ class ReceiptsController < ApplicationController
   before_action :set_receipt, only: [:show, :edit, :update, :destroy]
 
   def index
-    @receipts = Receipt.includes(:vendor).order(date: :desc)
+    @receipts = current_user.receipts.includes(:vendor).order(date: :desc)
   end
 
   def show
@@ -286,7 +423,7 @@ class ReceiptsController < ApplicationController
   end
 
   def create
-    @receipt = Receipt.new(receipt_params)
+    @receipt = current_user.receipts.new(receipt_params)
     if @receipt.save
       redirect_to @receipt.expense, notice: 'Receipt was successfully processed.'
     else
@@ -297,7 +434,7 @@ class ReceiptsController < ApplicationController
   private
 
   def set_receipt
-    @receipt = Receipt.find(params[:id])
+    @receipt = current_user.receipts.find(params[:id])
   end
 
   def receipt_params
@@ -310,7 +447,7 @@ class ExpensesController < ApplicationController
   before_action :set_expense, only: [:show, :edit, :update]
 
   def index
-    @expenses = Expense.includes(:vendor, :category, :receipt)
+    @expenses = current_user.expenses.includes(:vendor, :category, :receipt)
                       .recent
     @total = @expenses.sum(:amount)
     @expenses_by_category = @expenses.group(:category).sum(:amount)
@@ -333,7 +470,7 @@ class ExpensesController < ApplicationController
   private
 
   def set_expense
-    @expense = Expense.find(params[:id])
+    @expense = current_user.expenses.find(params[:id])
   end
 
   def expense_params
