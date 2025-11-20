@@ -1,0 +1,263 @@
+<style>
+  .login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+  }
+
+  .login-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+  }
+
+  .login-left {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px 40px;
+    color: white;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .login-left h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .login-left p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    line-height: 1.6;
+  }
+
+  .login-left .subtitle {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    margin-bottom: 15px;
+    font-weight: 500;
+  }
+
+  .feature-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+  }
+
+  .feature-list li {
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .feature-list i {
+    margin-right: 15px;
+    font-size: 1.3rem;
+  }
+
+  .login-right {
+    padding: 60px 40px;
+    flex: 1;
+  }
+
+  .login-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .login-header h2 {
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .login-header p {
+    color: #666;
+  }
+
+  .form-floating {
+    margin-bottom: 20px;
+  }
+
+  .form-floating input {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    height: 60px;
+  }
+
+  .form-floating input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  }
+
+  .form-floating label {
+    padding: 18px 15px;
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    transition: transform 0.2s;
+  }
+
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  .remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .remember-me input {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .login-links {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .login-links a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .login-links a:hover {
+    text-decoration: underline;
+  }
+
+  .alert {
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .login-card {
+      flex-direction: column;
+    }
+
+    .login-left {
+      padding: 40px 30px;
+    }
+
+    .login-right {
+      padding: 40px 30px;
+    }
+
+    .login-left h1 {
+      font-size: 2rem;
+    }
+  }
+</style>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-left">
+      <div>
+        <h1>
+          <i class="fas fa-wallet"></i><br>
+          PocketTrack
+        </h1>
+        <p class="subtitle">Personal Expense Tracker</p>
+        <p>Take control of your finances with smart expense tracking and automated categorization.</p>
+
+        <ul class="feature-list">
+          <li>
+            <i class="fas fa-receipt"></i>
+            <span>Upload and manage receipts</span>
+          </li>
+          <li>
+            <i class="fas fa-chart-pie"></i>
+            <span>Automatic expense categorization</span>
+          </li>
+          <li>
+            <i class="fas fa-chart-line"></i>
+            <span>Visual analytics and insights</span>
+          </li>
+          <li>
+            <i class="fas fa-mobile-alt"></i>
+            <span>Access anywhere, anytime</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="login-right">
+      <div class="login-header">
+        <h2>Welcome Back!</h2>
+        <p>Please login to your account</p>
+      </div>
+
+      <% if alert %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="fas fa-exclamation-circle"></i> <%= alert %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% end %>
+
+      <% if notice %>
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+          <i class="fas fa-info-circle"></i> <%= notice %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% end %>
+
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <div class="form-floating">
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "name@example.com", id: "floatingEmail" %>
+          <%= f.label :email, for: "floatingEmail" do %>
+            <i class="fas fa-envelope"></i> Email address
+          <% end %>
+        </div>
+
+        <div class="form-floating">
+          <%= f.password_field :password, autocomplete: "current-password", class: "form-control", placeholder: "Password", id: "floatingPassword" %>
+          <%= f.label :password, for: "floatingPassword" do %>
+            <i class="fas fa-lock"></i> Password
+          <% end %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="remember-me">
+            <%= f.check_box :remember_me, class: "form-check-input" %>
+            <%= f.label :remember_me, class: "form-check-label" do %>
+              Remember me
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="d-grid">
+          <%= f.submit "Login", class: "btn btn-login" %>
+        </div>
+      <% end %>
+
+      <div class="login-links">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
+  </div>
+</div>

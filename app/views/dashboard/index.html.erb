@@ -1,0 +1,402 @@
+<style>
+  .dashboard-welcome {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 40px;
+    color: white;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  }
+
+  .dashboard-welcome h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .dashboard-welcome p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin: 0;
+  }
+
+  .stat-card-simple {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    border: 2px solid transparent;
+  }
+
+  .stat-card-simple:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  .stat-card-simple.primary {
+    border-color: #667eea;
+  }
+
+  .stat-card-simple.warning {
+    border-color: #f5576c;
+  }
+
+  .stat-card-simple.success {
+    border-color: #4facfe;
+  }
+
+  .stat-card-simple.info {
+    border-color: #43e97b;
+  }
+
+  .stat-icon-simple {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2rem;
+  }
+
+  .stat-icon-simple.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .stat-icon-simple.warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+
+  .stat-icon-simple.success {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+  }
+
+  .stat-icon-simple.info {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+  }
+
+  .stat-value-simple {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+
+  .stat-label-simple {
+    font-size: 1rem;
+    color: #7f8c8d;
+    font-weight: 500;
+  }
+
+  .content-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+  }
+
+  .card-title-simple {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+  }
+
+  .card-title-simple i {
+    margin-right: 12px;
+    color: #667eea;
+  }
+
+  .category-bar {
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+  }
+
+  .category-bar:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+  }
+
+  .category-name-simple {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .category-amount-simple {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #667eea;
+  }
+
+  .progress-simple {
+    height: 10px;
+    border-radius: 10px;
+    background: #e9ecef;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+
+  .progress-fill-simple {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+  }
+
+  .receipt-card {
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+
+  .receipt-card:hover {
+    background: #e9ecef;
+    transform: scale(1.02);
+  }
+
+  .receipt-info h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+
+  .receipt-date-simple {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+  }
+
+  .receipt-amount-simple {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #43e97b;
+  }
+
+  .empty-state-simple {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .empty-state-simple i {
+    font-size: 5rem;
+    color: #e9ecef;
+    margin-bottom: 20px;
+  }
+
+  .empty-state-simple h4 {
+    color: #7f8c8d;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .empty-state-simple p {
+    color: #95a5a6;
+    margin-bottom: 25px;
+  }
+
+  .action-btn {
+    padding: 15px 35px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .action-btn.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .action-btn.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  .action-btn.secondary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+  }
+
+  .action-btn.secondary:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-3px);
+  }
+
+  .actions-row {
+    margin-top: 40px;
+    padding: 30px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-welcome h1 {
+      font-size: 1.8rem;
+    }
+
+    .stat-value-simple {
+      font-size: 2rem;
+    }
+
+    .action-btn {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+</style>
+
+<div class="dashboard-welcome">
+  <h1><i class="fas fa-wave-square"></i> Welcome to PocketTrack!</h1>
+  <p>Track your expenses, manage receipts, and gain insights into your spending habits</p>
+</div>
+
+<div class="row mb-4">
+  <div class="col-lg-3 col-md-6 mb-4">
+    <div class="stat-card-simple primary">
+      <div class="stat-icon-simple primary">
+        <i class="fas fa-dollar-sign"></i>
+      </div>
+      <div class="stat-value-simple">$<%= number_with_precision(@total_expenses, precision: 2) %></div>
+      <div class="stat-label-simple">Total Expenses</div>
+    </div>
+  </div>
+
+  <div class="col-lg-3 col-md-6 mb-4">
+    <div class="stat-card-simple warning">
+      <div class="stat-icon-simple warning">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-value-simple"><%= @pending_expenses %></div>
+      <div class="stat-label-simple">Pending Review</div>
+    </div>
+  </div>
+
+  <div class="col-lg-3 col-md-6 mb-4">
+    <div class="stat-card-simple success">
+      <div class="stat-icon-simple success">
+        <i class="fas fa-receipt"></i>
+      </div>
+      <div class="stat-value-simple"><%= @recent_receipts.count %></div>
+      <div class="stat-label-simple">Total Receipts</div>
+    </div>
+  </div>
+
+  <div class="col-lg-3 col-md-6 mb-4">
+    <div class="stat-card-simple info">
+      <div class="stat-icon-simple info">
+        <i class="fas fa-tags"></i>
+      </div>
+      <div class="stat-value-simple"><%= @expenses_by_category.count %></div>
+      <div class="stat-label-simple">Categories</div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-6 mb-4">
+    <div class="content-card">
+      <h3 class="card-title-simple">
+        <i class="fas fa-chart-pie"></i>
+        Spending by Category
+      </h3>
+
+      <% if @expenses_by_category.any? %>
+        <% total = @expenses_by_category.values.sum %>
+        <% @expenses_by_category.sort_by { |_, amount| -amount }.first(5).each do |category, amount| %>
+          <div class="category-bar">
+            <div class="category-name-simple">
+              <span><i class="fas fa-folder"></i> <%= category %></span>
+              <span class="category-amount-simple">$<%= number_with_precision(amount, precision: 2) %></span>
+            </div>
+            <div class="progress-simple">
+              <div class="progress-fill-simple" style="width: <%= (amount / total * 100).round(2) %>%"></div>
+            </div>
+            <small class="text-muted mt-2 d-block">
+              <%= number_with_precision((amount / total * 100), precision: 1) %>% of total spending
+            </small>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="empty-state-simple">
+          <i class="fas fa-chart-pie"></i>
+          <h4>No expenses yet</h4>
+          <p>Start tracking your expenses by adding your first receipt</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-lg-6 mb-4">
+    <div class="content-card">
+      <h3 class="card-title-simple">
+        <i class="fas fa-history"></i>
+        Recent Activity
+      </h3>
+
+      <% if @recent_receipts.any? %>
+        <% @recent_receipts.each do |receipt| %>
+          <div class="receipt-card">
+            <div class="receipt-info">
+              <h5><i class="fas fa-store"></i> <%= receipt.merchant %></h5>
+              <div class="receipt-date-simple">
+                <i class="far fa-calendar"></i> <%= receipt.date.strftime('%b %d, %Y') %>
+              </div>
+            </div>
+            <div class="receipt-amount-simple">
+              $<%= number_with_precision(receipt.amount, precision: 2) %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="empty-state-simple">
+          <i class="fas fa-receipt"></i>
+          <h4>No receipts yet</h4>
+          <p>Upload your first receipt to get started</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="actions-row">
+  <a href="#" class="action-btn primary">
+    <i class="fas fa-plus-circle"></i>
+    <span>Add Receipt</span>
+  </a>
+  <%= link_to expenses_path, class: "action-btn secondary" do %>
+    <i class="fas fa-list"></i>
+    <span>View All Expenses</span>
+  <% end %>
+</div>

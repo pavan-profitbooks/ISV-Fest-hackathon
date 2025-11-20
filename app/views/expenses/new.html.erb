@@ -1,0 +1,12 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><i class="fas fa-plus-circle"></i> New Expense</h1>
+  <%= link_to expenses_path, class: 'btn btn-secondary' do %>
+    <i class="fas fa-arrow-left"></i> Back to Expenses
+  <% end %>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <%= render 'form', expense: @expense %>
+  </div>
+</div>
