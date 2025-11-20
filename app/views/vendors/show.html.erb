@@ -1,0 +1,47 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><i class="fas fa-building"></i> <%= @vendor.name %></h1>
+  <div>
+    <%= link_to edit_vendor_path(@vendor), class: 'btn btn-warning me-2' do %>
+      <i class="fas fa-edit"></i> Edit
+    <% end %>
+    <%= link_to vendors_path, class: 'btn btn-secondary' do %>
+      <i class="fas fa-arrow-left"></i> Back to Vendors
+    <% end %>
+  </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Vendor Details</h5>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3"><i class="fas fa-tag"></i> Name:</dt>
+      <dd class="col-sm-9"><%= @vendor.name %></dd>
+
+      <dt class="col-sm-3"><i class="fas fa-envelope"></i> Email:</dt>
+      <dd class="col-sm-9"><%= @vendor.email.present? ? @vendor.email : '<span class="text-muted">Not provided</span>'.html_safe %></dd>
+
+      <dt class="col-sm-3"><i class="fas fa-phone"></i> Phone:</dt>
+      <dd class="col-sm-9"><%= @vendor.phone.present? ? @vendor.phone : '<span class="text-muted">Not provided</span>'.html_safe %></dd>
+
+      <dt class="col-sm-3"><i class="fas fa-map-marker-alt"></i> Address:</dt>
+      <dd class="col-sm-9"><%= @vendor.address.present? ? @vendor.address : '<span class="text-muted">Not provided</span>'.html_safe %></dd>
+
+      <dt class="col-sm-3"><i class="fas fa-id-card"></i> Tax Identifier:</dt>
+      <dd class="col-sm-9"><%= @vendor.tax_identifier.present? ? @vendor.tax_identifier : '<span class="text-muted">Not provided</span>'.html_safe %></dd>
+    </dl>
+  </div>
+</div>
+
+<div class="card shadow-sm border-danger">
+  <div class="card-header bg-danger text-white">
+    <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h5>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-3">Once you delete a vendor, there is no going back. Please be certain.</p>
+    <%= button_to @vendor, method: :delete, data: { confirm: 'Are you sure you want to delete this vendor? This action cannot be undone.' }, class: 'btn btn-danger' do %>
+      <i class="fas fa-trash"></i> Delete Vendor
+    <% end %>
+  </div>
+</div>

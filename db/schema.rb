@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_20_100000) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_20_100001) do
   create_table "categories", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -84,6 +84,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_20_100000) do
     t.string "tax_identifier"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_vendors_on_user_id"
   end
 
   add_foreign_key "categories", "users"
@@ -95,4 +97,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_20_100000) do
   add_foreign_key "receipts", "vendors"
   add_foreign_key "rules", "categories"
   add_foreign_key "rules", "users"
+  add_foreign_key "vendors", "users"
 end

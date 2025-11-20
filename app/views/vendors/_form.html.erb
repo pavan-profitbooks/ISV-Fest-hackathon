@@ -1,0 +1,41 @@
+<%= form_with(model: vendor, local: true) do |form| %>
+  <% if vendor.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(vendor.errors.count, "error") %> prohibited this vendor from being saved:</h4>
+      <ul>
+        <% vendor.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, class: 'form-label' %>
+    <%= form.text_field :name, class: 'form-control', required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :email, class: 'form-label' %>
+    <%= form.email_field :email, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :phone, class: 'form-label' %>
+    <%= form.text_field :phone, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :address, class: 'form-label' %>
+    <%= form.text_area :address, class: 'form-control', rows: 3 %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :tax_identifier, 'Tax ID', class: 'form-label' %>
+    <%= form.text_field :tax_identifier, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit class: 'btn btn-primary' %>
+  </div>
+<% end %>
