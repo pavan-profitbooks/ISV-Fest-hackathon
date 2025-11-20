@@ -1,0 +1,117 @@
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">
+      <i class="fas fa-chart-line text-primary"></i> Dashboard
+    </h1>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card text-white bg-primary shadow">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title text-uppercase mb-1">Total Expenses</h6>
+            <h2 class="mb-0">$<%= number_with_precision(@total_expenses, precision: 2) %></h2>
+          </div>
+          <div class="fs-1">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card text-white bg-warning shadow">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title text-uppercase mb-1">Pending Expenses</h6>
+            <h2 class="mb-0"><%= @pending_expenses %></h2>
+          </div>
+          <div class="fs-1">
+            <i class="fas fa-clock"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card text-white bg-success shadow">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title text-uppercase mb-1">Recent Receipts</h6>
+            <h2 class="mb-0"><%= @recent_receipts.count %></h2>
+          </div>
+          <div class="fs-1">
+            <i class="fas fa-receipt"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card shadow">
+      <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Expenses by Category</h5>
+      </div>
+      <div class="card-body">
+        <% if @expenses_by_category.any? %>
+          <ul class="list-group list-group-flush">
+            <% @expenses_by_category.each do |category, amount| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <%= category %>
+                <span class="badge bg-primary rounded-pill">$<%= number_with_precision(amount, precision: 2) %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted text-center mb-0">No expenses yet</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow">
+      <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-history"></i> Recent Receipts</h5>
+      </div>
+      <div class="card-body">
+        <% if @recent_receipts.any? %>
+          <ul class="list-group list-group-flush">
+            <% @recent_receipts.each do |receipt| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong><%= receipt.merchant %></strong><br>
+                  <small class="text-muted"><%= receipt.date.strftime('%b %d, %Y') %></small>
+                </div>
+                <span class="badge bg-success rounded-pill">$<%= number_with_precision(receipt.amount, precision: 2) %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted text-center mb-0">No receipts yet</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-12 text-center">
+    <a href="#" class="btn btn-primary btn-lg me-2">
+      <i class="fas fa-plus"></i> Add Receipt
+    </a>
+    <a href="#" class="btn btn-outline-primary btn-lg">
+      <i class="fas fa-list"></i> View All Expenses
+    </a>
+  </div>
+</div>

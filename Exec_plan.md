@@ -404,6 +404,233 @@ class VendorsController < ApplicationController
   end
 end
 
+# app/controllers/categories_controller.rb
+class CategoriesController < ApplicationController
+  before_action :set_category, only: [:show, :edit, :update, :destroy]
+
+  def index
+    @categories = current_user.categories
+  end
+
+  def new
+    @category = Category.new
+  end
+
+  def create
+    @category = current_user.categories.new(category_params)
+    if @category.save
+      redirect_to categories_path, notice: 'Category was successfully created.'
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @category.update(category_params)
+      redirect_to categories_path, notice: 'Category was successfully updated.'
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @category.destroy
+    redirect_to categories_path, notice: 'Category was successfully deleted.'
+  end
+
+  private
+
+  def set_category
+    @category = current_user.categories.find(params[:id])
+  end
+
+  def category_params
+    params.require(:category).permit(:name, :description)
+  end
+end
+
+# app/controllers/rules_controller.rb
+class RulesController < ApplicationController
+  before_action :set_rule, only: [:edit, :update, :destroy]
+
+  def index
+    @rules = current_user.rules.includes(:category)
+  end
+
+  def new
+    @rule = Rule.new
+    @categories = current_user.categories
+  end
+
+  def create
+    @rule = current_user.rules.new(rule_params)
+    if @rule.save
+      redirect_to rules_path, notice: 'Rule was successfully created.'
+    else
+      @categories = current_user.categories
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @rule.update(rule_params)
+      redirect_to rules_path, notice: 'Rule was successfully updated.'
+    else
+      @categories = current_user.categories
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @rule.destroy
+    redirect_to rules_path, notice: 'Rule was successfully deleted.'
+  end
+
+  private
+
+  def set_rule
+    @rule = current_user.rules.find(params[:id])
+  end
+
+  def rule_params
+    params.require(:rule).permit(:pattern, :category_id, :amount_threshold)
+  end
+end
+
+# app/controllers/receipts_controller.rb
+class ReceiptsController < ApplicationController
+  before_action :set_receipt, only: [:show, :edit, :update, :destroy]
+
+  def index
+    @receipts = current_user.receipts.includes(:vendor).order(date: :desc)
+  end
+
+  def show
+  end
+
+  def new
+    @receipt = Receipt.new
+    @vendors = current_user.vendors
+  end
+
+  def create
+    @receipt = current_user.receipts.new(receipt_params)
+    if @receipt.save
+      redirect_to receipts_path, notice: 'Receipt was successfully created.'
+    else
+      @vendors = current_user.vendors
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @receipt.update(receipt_params)
+      redirect_to receipt_path(@receipt), notice: 'Receipt was successfully updated.'
+    else
+      @vendors = current_user.vendors
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @receipt.destroy
+    redirect_to receipts_path, notice: 'Receipt was successfully deleted.'
+  end
+
+  private
+
+  def set_receipt
+    @receipt = current_user.receipts.find(params[:id])
+  end
+
+  def receipt_params
+    params.require(:receipt).permit(:merchant, :amount, :date, :image, :notes, :vendor_id)
+  end
+end
+
+# app/controllers/expenses_controller.rb
+class ExpensesController < ApplicationController
+  before_action :set_expense, only: [:show, :edit, :update, :destroy, :approve, :reject]
+
+  def index
+    @expenses = current_user.expenses.includes(:category, :vendor, :receipt).recent
+    @expenses = @expenses.by_status(params[:status]) if params[:status].present?
+  end
+
+  def show
+  end
+
+  def update
+    if @expense.update(expense_params)
+      redirect_to expenses_path, notice: 'Expense was successfully updated.'
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def approve
+    @expense.update(status: :approved)
+    redirect_to expenses_path, notice: 'Expense approved.'
+  end
+
+  def reject
+    @expense.update(status: :rejected)
+    redirect_to expenses_path, notice: 'Expense rejected.'
+  end
+
+  private
+
+  def set_expense
+    @expense = current_user.expenses.find(params[:id])
+  end
+
+  def expense_params
+    params.require(:expense).permit(:amount, :date, :description, :category_id, :status)
+  end
+end
+
+# app/controllers/dashboard_controller.rb
+class DashboardController < ApplicationController
+  def index
+    @total_expenses = current_user.expenses.sum(:amount)
+    @pending_expenses = current_user.expenses.pending.count
+    @recent_receipts = current_user.receipts.order(date: :desc).limit(5)
+    @expenses_by_category = current_user.expenses.joins(:category).group('categories.name').sum(:amount)
+  end
+end
+
+```ruby
+# Routes
+# config/routes.rb
+Rails.application.routes.draw do
+  root 'dashboard#index'
+  
+  get 'login', to: 'sessions#new'
+  post 'login', to: 'sessions#create'
+  delete 'logout', to: 'sessions#destroy'
+  
+  get 'signup', to: 'users#new'
+  post 'signup', to: 'users#create'
+  
+  resources :vendors
+  resources :categories
+  resources :rules
+  resources :receipts
+  resources :expenses do
+    member do
+      patch :approve
+      patch :reject
+    end
+  end
+endf set_vendor
+    @vendor = current_user.vendors.find(params[:id])
+  end
+
+  def vendor_params
+    params.require(:vendor).permit(:name, :address, :phone, :email, :tax_identifier)
+  end
+end
+
 # app/controllers/receipts_controller.rb
 class ReceiptsController < ApplicationController
   before_action :set_receipt, only: [:show, :edit, :update, :destroy]
