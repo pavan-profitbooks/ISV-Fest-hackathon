@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  pattern: MyString
+  category: one
+  amount_threshold: 9.99
+  user: one
+
+two:
+  pattern: MyString
+  category: two
+  amount_threshold: 9.99
+  user: two
