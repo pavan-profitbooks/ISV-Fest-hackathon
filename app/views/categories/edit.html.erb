@@ -1,0 +1,17 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><i class="fas fa-edit"></i> Edit Category</h1>
+  <div>
+    <%= link_to @category, class: 'btn btn-info me-2' do %>
+      <i class="fas fa-eye"></i> View
+    <% end %>
+    <%= link_to categories_path, class: 'btn btn-secondary' do %>
+      <i class="fas fa-arrow-left"></i> Back to Categories
+    <% end %>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <%= render 'form', category: @category %>
+  </div>
+</div>

@@ -1,0 +1,111 @@
+<h1 class="mb-4"><i class="fas fa-chart-bar"></i> Monthly Spending Trends</h1>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= form_with url: monthly_trends_reports_path, method: :get, local: true, class: 'row g-3' do |f| %>
+      <div class="col-md-6">
+        <%= f.label :months, 'Number of Months', class: 'form-label' %>
+        <%= f.select :months, [[3, 3], [6, 6], [12, 12], [24, 24]], {}, class: 'form-select' %>
+      </div>
+      <div class="col-md-6 d-flex align-items-end">
+        <%= f.submit 'Generate Report', class: 'btn btn-primary w-100' %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% if @monthly_data.any? %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Spending Trends - Last <%= @months %> Months</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Total Spending</th>
+              <th>Number of Expenses</th>
+              <th>Average per Expense</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @monthly_data.each do |month, amount| %>
+              <tr>
+                <td><strong><%= month.strftime('%B %Y') %></strong></td>
+                <td class="text-primary fw-bold">$<%= number_with_precision(amount, precision: 2) %></td>
+                <td><%= @monthly_counts[month] || 0 %></td>
+                <td>
+                  <% count = @monthly_counts[month] || 0 %>
+                  <% if count > 0 %>
+                    $<%= number_with_precision(amount / count, precision: 2) %>
+                  <% else %>
+                    -
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr class="table-active">
+              <th>Total</th>
+              <th class="text-primary">$<%= number_with_precision(@monthly_data.values.sum, precision: 2) %></th>
+              <th><%= @monthly_counts.values.sum %></th>
+              <th>
+                <% total_expenses = @monthly_counts.values.sum %>
+                <% if total_expenses > 0 %>
+                  $<%= number_with_precision(@monthly_data.values.sum / total_expenses, precision: 2) %>
+                <% else %>
+                  -
+                <% end %>
+              </th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card text-white bg-success">
+        <div class="card-body text-center">
+          <h3>$<%= number_with_precision(@monthly_data.values.sum, precision: 2) %></h3>
+          <p class="mb-0">Total Spending</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-info">
+        <div class="card-body text-center">
+          <% avg = @monthly_data.values.sum / @monthly_data.count %>
+          <h3>$<%= number_with_precision(avg, precision: 2) %></h3>
+          <p class="mb-0">Average per Month</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-warning">
+        <div class="card-body text-center">
+          <h3><%= @monthly_counts.values.sum %></h3>
+          <p class="mb-0">Total Expenses</p>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="card shadow-sm">
+    <div class="card-body text-center py-5">
+      <i class="fas fa-chart-bar" style="font-size: 4rem; color: #ccc; margin-bottom: 20px;"></i>
+      <h4 class="text-muted">No Data Available</h4>
+      <p class="text-muted">No expenses found for the selected time period.</p>
+    </div>
+  </div>
+<% end %>
+
+<div class="mt-4">
+  <%= link_to reports_path, class: 'btn btn-secondary' do %>
+    <i class="fas fa-arrow-left"></i> Back to Reports
+  <% end %>
+</div>

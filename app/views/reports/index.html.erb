@@ -1,0 +1,231 @@
+<style>
+  .report-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    border-left: 4px solid;
+  }
+
+  .report-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  .report-card.expense { border-left-color: #667eea; }
+  .report-card.vendor { border-left-color: #f5576c; }
+  .report-card.category { border-left-color: #4facfe; }
+  .report-card.receipt { border-left-color: #43e97b; }
+  .report-card.analytics { border-left-color: #f093fb; }
+
+  .report-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+
+  .report-card.expense .report-icon { background: rgba(102, 126, 234, 0.1); color: #667eea; }
+  .report-card.vendor .report-icon { background: rgba(245, 87, 108, 0.1); color: #f5576c; }
+  .report-card.category .report-icon { background: rgba(79, 172, 254, 0.1); color: #4facfe; }
+  .report-card.receipt .report-icon { background: rgba(67, 233, 123, 0.1); color: #43e97b; }
+  .report-card.analytics .report-icon { background: rgba(240, 147, 251, 0.1); color: #f093fb; }
+
+  .report-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+
+  .report-description {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .report-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .report-link {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    color: #2c3e50;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .report-link:hover {
+    background: #e9ecef;
+    color: #667eea;
+    transform: translateX(5px);
+  }
+
+  .stats-overview {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  }
+
+  .stat-box {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+</style>
+
+<h1 class="mb-4"><i class="fas fa-chart-bar"></i> Reports & Analytics</h1>
+
+<div class="stats-overview">
+  <div class="row">
+    <div class="col-md-3 stat-box">
+      <div class="stat-value">$<%= number_with_precision(@total_expenses, precision: 2) %></div>
+      <div class="stat-label">Total Expenses</div>
+    </div>
+    <div class="col-md-3 stat-box">
+      <div class="stat-value">$<%= number_with_precision(@monthly_expenses, precision: 2) %></div>
+      <div class="stat-label">This Month</div>
+    </div>
+    <div class="col-md-3 stat-box">
+      <div class="stat-value"><%= @pending_count %></div>
+      <div class="stat-label">Pending Review</div>
+    </div>
+    <div class="col-md-3 stat-box">
+      <div class="stat-value"><%= @categories_count %></div>
+      <div class="stat-label">Categories</div>
+    </div>
+  </div>
+</div>
+
+<h3 class="mb-3">Available Reports</h3>
+
+<div class="row">
+  <!-- Expense Reports -->
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="report-card expense">
+      <div class="report-icon">
+        <i class="fas fa-money-bill-wave"></i>
+      </div>
+      <div class="report-title">Expense Reports</div>
+      <div class="report-description">Analyze your expenses by date, category, vendor, and status</div>
+      <div class="report-links">
+        <%= link_to expenses_by_date_reports_path, class: 'report-link' do %>
+          <i class="fas fa-calendar"></i> By Date Range
+        <% end %>
+        <%= link_to expenses_by_category_reports_path, class: 'report-link' do %>
+          <i class="fas fa-tags"></i> By Category
+        <% end %>
+        <%= link_to expenses_by_vendor_reports_path, class: 'report-link' do %>
+          <i class="fas fa-building"></i> By Vendor
+        <% end %>
+        <%= link_to expenses_by_status_reports_path, class: 'report-link' do %>
+          <i class="fas fa-check-circle"></i> By Status
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vendor Reports -->
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="report-card vendor">
+      <div class="report-icon">
+        <i class="fas fa-building"></i>
+      </div>
+      <div class="report-title">Vendor Reports</div>
+      <div class="report-description">Track vendor spending and transaction history</div>
+      <div class="report-links">
+        <%= link_to top_vendors_reports_path, class: 'report-link' do %>
+          <i class="fas fa-trophy"></i> Top Vendors
+        <% end %>
+        <%= link_to vendor_transactions_reports_path, class: 'report-link' do %>
+          <i class="fas fa-list"></i> Transaction History
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Reports -->
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="report-card category">
+      <div class="report-icon">
+        <i class="fas fa-tags"></i>
+      </div>
+      <div class="report-title">Category Reports</div>
+      <div class="report-description">Understand spending patterns across categories</div>
+      <div class="report-links">
+        <%= link_to category_trends_reports_path, class: 'report-link' do %>
+          <i class="fas fa-chart-line"></i> Category Trends
+        <% end %>
+        <%= link_to category_summary_reports_path, class: 'report-link' do %>
+          <i class="fas fa-list-alt"></i> Category Summary
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt Reports -->
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="report-card receipt">
+      <div class="report-icon">
+        <i class="fas fa-receipt"></i>
+      </div>
+      <div class="report-title">Receipt Reports</div>
+      <div class="report-description">Manage and track your receipts effectively</div>
+      <div class="report-links">
+        <%= link_to unprocessed_receipts_reports_path, class: 'report-link' do %>
+          <i class="fas fa-exclamation-circle"></i> Unprocessed Receipts
+        <% end %>
+        <%= link_to receipts_by_date_reports_path, class: 'report-link' do %>
+          <i class="fas fa-calendar"></i> By Date Range
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Reports -->
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="report-card analytics">
+      <div class="report-icon">
+        <i class="fas fa-chart-area"></i>
+      </div>
+      <div class="report-title">Analytics & Trends</div>
+      <div class="report-description">Deep insights into your spending patterns</div>
+      <div class="report-links">
+        <%= link_to monthly_trends_reports_path, class: 'report-link' do %>
+          <i class="fas fa-chart-bar"></i> Monthly Trends
+        <% end %>
+        <%= link_to year_comparison_reports_path, class: 'report-link' do %>
+          <i class="fas fa-exchange-alt"></i> Year Comparison
+        <% end %>
+        <%= link_to expense_summary_reports_path, class: 'report-link' do %>
+          <i class="fas fa-file-alt"></i> Expense Summary
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
