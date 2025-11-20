@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Vendors</h1>
+  <%= link_to new_vendor_path, class: 'btn btn-primary' do %>
+    <i class="fas fa-plus"></i> New Vendor
+  <% end %>
+</div>
+
+<% if @vendors.any? %>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Tax ID</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @vendors.each do |vendor| %>
+              <tr>
+                <td><strong><%= vendor.name %></strong></td>
+                <td><%= vendor.email %></td>
+                <td><%= vendor.phone %></td>
+                <td><%= vendor.tax_identifier %></td>
+                <td>
+                  <%= link_to vendor, class: 'btn btn-sm btn-info' do %>
+                    <i class="fas fa-eye"></i> View
+                  <% end %>
+                  <%= link_to edit_vendor_path(vendor), class: 'btn btn-sm btn-warning' do %>
+                    <i class="fas fa-edit"></i> Edit
+                  <% end %>
+                  <%= button_to vendor, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger' do %>
+                    <i class="fas fa-trash"></i> Delete
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="card shadow-sm text-center py-5">
+    <div class="card-body">
+      <i class="fas fa-building" style="font-size: 4rem; color: #ccc; margin-bottom: 20px;"></i>
+      <h4 class="text-muted">No vendors found</h4>
+      <p class="text-muted">Get started by creating your first vendor</p>
+      <%= link_to new_vendor_path, class: 'btn btn-primary mt-3' do %>
+        <i class="fas fa-plus"></i> Create Your First Vendor
+      <% end %>
+    </div>
+  </div>
+<% end %>
