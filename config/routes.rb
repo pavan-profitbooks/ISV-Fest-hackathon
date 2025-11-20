@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  # Devise routes for user authentication
+  devise_for :users, controllers: {
+    sessions: 'users/sessions',
+    registrations: 'users/registrations',
+    passwords: 'users/passwords',
+    confirmations: 'users/confirmations',
+    unlocks: 'users/unlocks'
+  }
+
   root 'dashboard#index'
   
   get 'login', to: 'sessions#new'
