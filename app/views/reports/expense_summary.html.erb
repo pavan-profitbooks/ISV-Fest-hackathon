@@ -1,0 +1,137 @@
+<h1 class="mb-4"><i class="fas fa-file-alt"></i> Comprehensive Expense Summary</h1>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= form_with url: expense_summary_reports_path, method: :get, local: true, class: 'row g-3' do |f| %>
+      <div class="col-md-4">
+        <%= f.label :start_date, 'Start Date', class: 'form-label' %>
+        <%= f.date_field :start_date, value: @start_date, class: 'form-control' %>
+      </div>
+      <div class="col-md-4">
+        <%= f.label :end_date, 'End Date', class: 'form-label' %>
+        <%= f.date_field :end_date, value: @end_date, class: 'form-control' %>
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <%= f.submit 'Generate Report', class: 'btn btn-primary w-100' %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card text-white bg-primary">
+      <div class="card-body text-center">
+        <h3>$<%= number_with_precision(@summary[:total], precision: 2) %></h3>
+        <p class="mb-0">Total Expenses</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-info">
+      <div class="card-body text-center">
+        <h3><%= @summary[:count] %></h3>
+        <p class="mb-0">Total Count</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-success">
+      <div class="card-body text-center">
+        <h3>$<%= number_with_precision(@summary[:average], precision: 2) %></h3>
+        <p class="mb-0">Average</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-warning">
+      <div class="card-body text-center">
+        <h3>$<%= number_with_precision(@summary[:highest], precision: 2) %></h3>
+        <p class="mb-0">Highest</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-tags"></i> Top 5 Categories</h5>
+      </div>
+      <div class="card-body">
+        <% if @top_categories && @top_categories.any? %>
+          <ul class="list-group list-group-flush">
+            <% @top_categories.each_with_index do |(category, amount), index| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= index + 1 %>. <%= category %></span>
+                <span class="badge bg-primary rounded-pill">$<%= number_with_precision(amount, precision: 2) %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted text-center">No category data</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="fas fa-building"></i> Top 5 Vendors</h5>
+      </div>
+      <div class="card-body">
+        <% if @top_vendors && @top_vendors.any? %>
+          <ul class="list-group list-group-flush">
+            <% @top_vendors.each_with_index do |(vendor, amount), index| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= index + 1 %>. <%= vendor %></span>
+                <span class="badge bg-primary rounded-pill">$<%= number_with_precision(amount, precision: 2) %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-muted text-center">No vendor data</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-header bg-white">
+    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> By Status</h5>
+  </div>
+  <div class="card-body">
+    <div class="row text-center">
+      <div class="col-md-4">
+        <div class="p-3">
+          <i class="fas fa-clock text-warning" style="font-size: 2rem;"></i>
+          <h3 class="mt-2">$<%= number_with_precision(@summary[:pending], precision: 2) %></h3>
+          <p class="text-muted">Pending</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-3">
+          <i class="fas fa-check-circle text-success" style="font-size: 2rem;"></i>
+          <h3 class="mt-2">$<%= number_with_precision(@summary[:approved], precision: 2) %></h3>
+          <p class="text-muted">Approved</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-3">
+          <i class="fas fa-times-circle text-danger" style="font-size: 2rem;"></i>
+          <h3 class="mt-2">$<%= number_with_precision(@summary[:rejected], precision: 2) %></h3>
+          <p class="text-muted">Rejected</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4">
+  <%= link_to reports_path, class: 'btn btn-secondary' do %>
+    <i class="fas fa-arrow-left"></i> Back to Reports
+  <% end %>
+</div>

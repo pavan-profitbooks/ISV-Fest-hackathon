@@ -1,0 +1,101 @@
+<h1 class="mb-4"><i class="fas fa-exchange-alt"></i> Year-over-Year Comparison</h1>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <%= form_with url: year_comparison_reports_path, method: :get, local: true, class: 'row g-3' do |f| %>
+      <div class="col-md-6">
+        <%= f.label :year, 'Current Year', class: 'form-label' %>
+        <%= f.select :year, (2020..Date.today.year+1).to_a.reverse, {}, class: 'form-select' %>
+      </div>
+      <div class="col-md-6 d-flex align-items-end">
+        <%= f.submit 'Generate Report', class: 'btn btn-primary w-100' %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card text-white bg-primary">
+      <div class="card-body text-center">
+        <h3>$<%= number_with_precision(@current_total, precision: 2) %></h3>
+        <p class="mb-0"><%= @current_year %> Total</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-white bg-secondary">
+      <div class="card-body text-center">
+        <h3>$<%= number_with_precision(@previous_total, precision: 2) %></h3>
+        <p class="mb-0"><%= @previous_year %> Total</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-white <%= @change_percentage >= 0 ? 'bg-danger' : 'bg-success' %>">
+      <div class="card-body text-center">
+        <h3>
+          <%= @change_percentage >= 0 ? '+' : '' %><%= @change_percentage %>%
+        </h3>
+        <p class="mb-0">Change</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-header bg-white">
+    <h5 class="mb-0">Monthly Comparison</h5>
+  </div>
+  <div class="card-body">
+    <% if @current_year_data.any? || @previous_year_data.any? %>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th><%= @current_year %></th>
+              <th><%= @previous_year %></th>
+              <th>Difference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% (1..12).each do |month_num| %>
+              <% current_month = Date.new(@current_year, month_num, 1) %>
+              <% previous_month = Date.new(@previous_year, month_num, 1) %>
+              <% current_amount = @current_year_data[current_month] || 0 %>
+              <% previous_amount = @previous_year_data[previous_month] || 0 %>
+              <% difference = current_amount - previous_amount %>
+              <tr>
+                <td><strong><%= Date::MONTHNAMES[month_num] %></strong></td>
+                <td class="text-primary">$<%= number_with_precision(current_amount, precision: 2) %></td>
+                <td class="text-secondary">$<%= number_with_precision(previous_amount, precision: 2) %></td>
+                <td class="<%= difference >= 0 ? 'text-danger' : 'text-success' %>">
+                  <%= difference >= 0 ? '+' : '' %>$<%= number_with_precision(difference, precision: 2) %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr class="table-active">
+              <th>Total</th>
+              <th class="text-primary">$<%= number_with_precision(@current_total, precision: 2) %></th>
+              <th class="text-secondary">$<%= number_with_precision(@previous_total, precision: 2) %></th>
+              <th class="<%= (@current_total - @previous_total) >= 0 ? 'text-danger' : 'text-success' %>">
+                <%= (@current_total - @previous_total) >= 0 ? '+' : '' %>$<%= number_with_precision(@current_total - @previous_total, precision: 2) %>
+              </th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-center text-muted py-4">No data available for comparison.</p>
+    <% end %>
+  </div>
+</div>
+
+<div class="mt-4">
+  <%= link_to reports_path, class: 'btn btn-secondary' do %>
+    <i class="fas fa-arrow-left"></i> Back to Reports
+  <% end %>
+</div>

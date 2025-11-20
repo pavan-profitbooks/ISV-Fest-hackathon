@@ -211,22 +211,22 @@
             </a>
           </li>
           <li>
-            <a href="#">
+            <%= link_to expenses_path, class: "#{request.path.start_with?('/expenses') ? 'active' : ''}" do %>
               <i class="fas fa-money-bill-wave"></i>
               <span>Expenses</span>
-            </a>
+            <% end %>
           </li>
           <li>
-            <a href="#">
+            <%= link_to categories_path, class: "#{request.path.start_with?('/categories') ? 'active' : ''}" do %>
               <i class="fas fa-tags"></i>
               <span>Categories</span>
-            </a>
+            <% end %>
           </li>
           <li>
-            <a href="#">
-              <i class="fas fa-cog"></i>
-              <span>Settings</span>
-            </a>
+            <%= link_to reports_path, class: "#{request.path.start_with?('/reports') ? 'active' : ''}" do %>
+              <i class="fas fa-chart-bar"></i>
+              <span>Reports</span>
+            <% end %>
           </li>
         </ul>
 

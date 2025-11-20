@@ -1,0 +1,92 @@
+<%= form_with(model: expense, local: true) do |form| %>
+  <% if expense.errors.any? %>
+    <div class="alert alert-danger">
+      <h5><i class="fas fa-exclamation-circle"></i> <%= pluralize(expense.errors.count, "error") %> prohibited this expense from being saved:</h5>
+      <ul class="mb-0">
+        <% expense.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :amount, class: 'form-label' do %>
+        <i class="fas fa-dollar-sign"></i> Amount *
+      <% end %>
+      <div class="input-group">
+        <span class="input-group-text">$</span>
+        <%= form.number_field :amount, step: 0.01, class: 'form-control', placeholder: '0.00', required: true %>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :date, class: 'form-label' do %>
+        <i class="far fa-calendar"></i> Date *
+      <% end %>
+      <%= form.date_field :date, class: 'form-control', value: expense.date || Date.today, required: true %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, class: 'form-label' do %>
+      <i class="fas fa-align-left"></i> Description
+    <% end %>
+    <%= form.text_area :description, class: 'form-control', rows: 3, placeholder: 'Enter expense description...' %>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :vendor_id, class: 'form-label' do %>
+        <i class="fas fa-building"></i> Vendor
+      <% end %>
+      <%= form.select :vendor_id,
+          options_from_collection_for_select(@vendors, :id, :name, expense.vendor_id),
+          { include_blank: 'Select a vendor' },
+          class: 'form-select' %>
+      <small class="text-muted">Optional: Link this expense to a vendor</small>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :category_id, class: 'form-label' do %>
+        <i class="fas fa-tag"></i> Category
+      <% end %>
+      <%= form.select :category_id,
+          options_from_collection_for_select(@categories, :id, :name, expense.category_id),
+          { include_blank: 'Select a category' },
+          class: 'form-select' %>
+      <small class="text-muted">Optional: Categorize this expense</small>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :receipt_id, class: 'form-label' do %>
+        <i class="fas fa-receipt"></i> Receipt
+      <% end %>
+      <%= form.select :receipt_id,
+          options_from_collection_for_select(@receipts, :id, ->(r) { "#{r.merchant} - $#{r.amount} (#{r.date.strftime('%b %d, %Y')})" }, expense.receipt_id),
+          { include_blank: 'No receipt' },
+          class: 'form-select' %>
+      <small class="text-muted">Optional: Link this expense to a receipt</small>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :status, class: 'form-label' do %>
+        <i class="fas fa-check-circle"></i> Status *
+      <% end %>
+      <%= form.select :status,
+          Expense.statuses.keys.map { |status| [status.titleize, status] },
+          {},
+          class: 'form-select',
+          required: true %>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <%= form.submit class: 'btn btn-primary btn-lg' do %>
+      <i class="fas fa-save"></i> <%= expense.new_record? ? 'Create Expense' : 'Update Expense' %>
+    <% end %>
+  </div>
+<% end %>

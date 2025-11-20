@@ -1,457 +1,402 @@
 <style>
-  .dashboard-header {
-    margin-bottom: 40px;
-    padding-bottom: 20px;
-    border-bottom: 3px solid #f0f0f0;
+  .dashboard-welcome {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 40px;
+    color: white;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
   }
 
-  .dashboard-header h1 {
+  .dashboard-welcome h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .dashboard-welcome p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin: 0;
+  }
+
+  .stat-card-simple {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    border: 2px solid transparent;
+  }
+
+  .stat-card-simple:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  .stat-card-simple.primary {
+    border-color: #667eea;
+  }
+
+  .stat-card-simple.warning {
+    border-color: #f5576c;
+  }
+
+  .stat-card-simple.success {
+    border-color: #4facfe;
+  }
+
+  .stat-card-simple.info {
+    border-color: #43e97b;
+  }
+
+  .stat-icon-simple {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2rem;
+  }
+
+  .stat-icon-simple.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .stat-icon-simple.warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+
+  .stat-icon-simple.success {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+  }
+
+  .stat-icon-simple.info {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+  }
+
+  .stat-value-simple {
     font-size: 2.5rem;
     font-weight: 700;
     color: #2c3e50;
     margin-bottom: 10px;
   }
 
-  .dashboard-header p {
+  .stat-label-simple {
+    font-size: 1rem;
     color: #7f8c8d;
-    font-size: 1.1rem;
+    font-weight: 500;
   }
 
-  .stat-card {
-    border: none;
+  .content-card {
+    background: white;
     border-radius: 15px;
-    transition: all 0.3s ease;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100px;
-    height: 100px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    transform: translate(30%, -30%);
-  }
-
-  .stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-  }
-
-  .stat-card.primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-
-  .stat-card.warning {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  }
-
-  .stat-card.success {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  }
-
-  .stat-card.info {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  }
-
-  .stat-icon {
-    font-size: 3rem;
-    opacity: 0.9;
-  }
-
-  .stat-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 10px 0;
-  }
-
-  .stat-label {
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    opacity: 0.9;
-  }
-
-  .section-card {
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     margin-bottom: 30px;
+  }
+
+  .card-title-simple {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+  }
+
+  .card-title-simple i {
+    margin-right: 12px;
+    color: #667eea;
+  }
+
+  .category-bar {
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background: #f8f9fa;
     transition: all 0.3s ease;
   }
 
-  .section-card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  }
-
-  .card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 15px 15px 0 0 !important;
-    padding: 20px 25px;
-  }
-
-  .card-header h5 {
-    margin: 0;
-    font-weight: 600;
-    font-size: 1.2rem;
-  }
-
-  .card-header i {
-    margin-right: 10px;
-  }
-
-  .category-item {
-    padding: 15px 20px;
-    border-left: 4px solid #667eea;
-    margin-bottom: 10px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-  }
-
-  .category-item:hover {
+  .category-bar:hover {
     background: #e9ecef;
     transform: translateX(5px);
   }
 
-  .category-name {
+  .category-name-simple {
+    font-size: 1.1rem;
     font-weight: 600;
     color: #2c3e50;
-    font-size: 1rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
-  .category-amount {
-    font-size: 1.2rem;
+  .category-amount-simple {
+    font-size: 1.3rem;
     font-weight: 700;
     color: #667eea;
   }
 
-  .receipt-item {
-    padding: 15px 20px;
-    border-bottom: 1px solid #e9ecef;
-    transition: all 0.2s ease;
+  .progress-simple {
+    height: 10px;
+    border-radius: 10px;
+    background: #e9ecef;
+    overflow: hidden;
+    margin-top: 10px;
   }
 
-  .receipt-item:last-child {
-    border-bottom: none;
+  .progress-fill-simple {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    transition: width 0.5s ease;
   }
 
-  .receipt-item:hover {
+  .receipt-card {
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
     background: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
   }
 
-  .receipt-merchant {
+  .receipt-card:hover {
+    background: #e9ecef;
+    transform: scale(1.02);
+  }
+
+  .receipt-info h5 {
+    font-size: 1.1rem;
     font-weight: 600;
     color: #2c3e50;
-    font-size: 1.1rem;
+    margin-bottom: 5px;
   }
 
-  .receipt-date {
+  .receipt-date-simple {
     color: #7f8c8d;
     font-size: 0.9rem;
   }
 
-  .receipt-amount {
-    font-size: 1.3rem;
+  .receipt-amount-simple {
+    font-size: 1.5rem;
     font-weight: 700;
     color: #43e97b;
   }
 
-  .empty-state {
+  .empty-state-simple {
     text-align: center;
-    padding: 40px 20px;
-    color: #7f8c8d;
+    padding: 60px 20px;
   }
 
-  .empty-state i {
-    font-size: 4rem;
+  .empty-state-simple i {
+    font-size: 5rem;
+    color: #e9ecef;
     margin-bottom: 20px;
-    opacity: 0.3;
   }
 
-  .empty-state p {
-    font-size: 1.1rem;
-    margin-bottom: 0;
+  .empty-state-simple h4 {
+    color: #7f8c8d;
+    font-weight: 600;
+    margin-bottom: 10px;
   }
 
-  .action-buttons {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 40px;
-    border-radius: 15px;
-    margin-top: 40px;
+  .empty-state-simple p {
+    color: #95a5a6;
+    margin-bottom: 25px;
   }
 
-  .btn-action {
-    padding: 15px 40px;
+  .action-btn {
+    padding: 15px 35px;
     border-radius: 50px;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1rem;
     transition: all 0.3s ease;
     border: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  .btn-action:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  }
-
-  .btn-action.primary {
+  .action-btn.primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
   }
 
-  .btn-action.outline {
+  .action-btn.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  .action-btn.secondary {
     background: white;
     color: #667eea;
     border: 2px solid #667eea;
   }
 
-  .progress-bar-custom {
-    height: 8px;
-    border-radius: 10px;
-    background: #e9ecef;
-    margin-top: 10px;
+  .action-btn.secondary:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-3px);
   }
 
-  .progress-fill {
-    height: 100%;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-    transition: width 0.3s ease;
+  .actions-row {
+    margin-top: 40px;
+    padding: 30px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    text-align: center;
   }
 
   @media (max-width: 768px) {
-    .dashboard-header h1 {
+    .dashboard-welcome h1 {
+      font-size: 1.8rem;
+    }
+
+    .stat-value-simple {
       font-size: 2rem;
     }
 
-    .stat-value {
-      font-size: 2rem;
-    }
-
-    .stat-icon {
-      font-size: 2.5rem;
-    }
-
-    .action-buttons {
-      padding: 30px 20px;
-    }
-
-    .btn-action {
+    .action-btn {
       width: 100%;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
   }
 </style>
 
-<div class="dashboard-header">
-  <h1>
-    <i class="fas fa-chart-line text-primary"></i> Dashboard
-  </h1>
-  <p>Welcome back! Here's your expense overview</p>
+<div class="dashboard-welcome">
+  <h1><i class="fas fa-wave-square"></i> Welcome to PocketTrack!</h1>
+  <p>Track your expenses, manage receipts, and gain insights into your spending habits</p>
 </div>
 
 <div class="row mb-4">
   <div class="col-lg-3 col-md-6 mb-4">
-    <div class="stat-card primary shadow">
-      <div class="card-body text-white">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="stat-label">Total Expenses</div>
-            <div class="stat-value">$<%= number_with_precision(@total_expenses, precision: 2) %></div>
-            <small><i class="fas fa-calendar"></i> All time</small>
-          </div>
-          <div class="stat-icon">
-            <i class="fas fa-dollar-sign"></i>
-          </div>
-        </div>
+    <div class="stat-card-simple primary">
+      <div class="stat-icon-simple primary">
+        <i class="fas fa-dollar-sign"></i>
       </div>
+      <div class="stat-value-simple">$<%= number_with_precision(@total_expenses, precision: 2) %></div>
+      <div class="stat-label-simple">Total Expenses</div>
     </div>
   </div>
 
   <div class="col-lg-3 col-md-6 mb-4">
-    <div class="stat-card warning shadow">
-      <div class="card-body text-white">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="stat-label">Pending Review</div>
-            <div class="stat-value"><%= @pending_expenses %></div>
-            <small><i class="fas fa-clock"></i> Needs attention</small>
-          </div>
-          <div class="stat-icon">
-            <i class="fas fa-hourglass-half"></i>
-          </div>
-        </div>
+    <div class="stat-card-simple warning">
+      <div class="stat-icon-simple warning">
+        <i class="fas fa-clock"></i>
       </div>
+      <div class="stat-value-simple"><%= @pending_expenses %></div>
+      <div class="stat-label-simple">Pending Review</div>
     </div>
   </div>
 
   <div class="col-lg-3 col-md-6 mb-4">
-    <div class="stat-card success shadow">
-      <div class="card-body text-white">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="stat-label">Total Receipts</div>
-            <div class="stat-value"><%= @recent_receipts.count %></div>
-            <small><i class="fas fa-file-invoice"></i> Recent uploads</small>
-          </div>
-          <div class="stat-icon">
-            <i class="fas fa-receipt"></i>
-          </div>
-        </div>
+    <div class="stat-card-simple success">
+      <div class="stat-icon-simple success">
+        <i class="fas fa-receipt"></i>
       </div>
+      <div class="stat-value-simple"><%= @recent_receipts.count %></div>
+      <div class="stat-label-simple">Total Receipts</div>
     </div>
   </div>
 
   <div class="col-lg-3 col-md-6 mb-4">
-    <div class="stat-card info shadow">
-      <div class="card-body text-white">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <div class="stat-label">Categories</div>
-            <div class="stat-value"><%= @expenses_by_category.count %></div>
-            <small><i class="fas fa-tags"></i> Active categories</small>
-          </div>
-          <div class="stat-icon">
-            <i class="fas fa-chart-pie"></i>
-          </div>
-        </div>
+    <div class="stat-card-simple info">
+      <div class="stat-icon-simple info">
+        <i class="fas fa-tags"></i>
       </div>
+      <div class="stat-value-simple"><%= @expenses_by_category.count %></div>
+      <div class="stat-label-simple">Categories</div>
     </div>
   </div>
 </div>
 
 <div class="row">
   <div class="col-lg-6 mb-4">
-    <div class="section-card">
-      <div class="card-header">
-        <h5><i class="fas fa-chart-pie"></i> Expenses by Category</h5>
-      </div>
-      <div class="card-body">
-        <% if @expenses_by_category.any? %>
-          <% total = @expenses_by_category.values.sum %>
-          <% @expenses_by_category.sort_by { |_, amount| -amount }.each do |category, amount| %>
-            <div class="category-item">
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="flex-grow-1">
-                  <div class="category-name">
-                    <i class="fas fa-folder"></i> <%= category %>
-                  </div>
-                  <div class="progress-bar-custom">
-                    <div class="progress-fill" style="width: <%= (amount / total * 100).round(2) %>%"></div>
-                  </div>
-                </div>
-                <div class="category-amount ms-3">
-                  $<%= number_with_precision(amount, precision: 2) %>
-                </div>
-              </div>
-              <small class="text-muted">
-                <%= number_with_precision((amount / total * 100), precision: 1) %>% of total
-              </small>
+    <div class="content-card">
+      <h3 class="card-title-simple">
+        <i class="fas fa-chart-pie"></i>
+        Spending by Category
+      </h3>
+
+      <% if @expenses_by_category.any? %>
+        <% total = @expenses_by_category.values.sum %>
+        <% @expenses_by_category.sort_by { |_, amount| -amount }.first(5).each do |category, amount| %>
+          <div class="category-bar">
+            <div class="category-name-simple">
+              <span><i class="fas fa-folder"></i> <%= category %></span>
+              <span class="category-amount-simple">$<%= number_with_precision(amount, precision: 2) %></span>
             </div>
-          <% end %>
-        <% else %>
-          <div class="empty-state">
-            <i class="fas fa-chart-pie"></i>
-            <p>No expense data yet</p>
-            <small>Start by adding your first receipt</small>
+            <div class="progress-simple">
+              <div class="progress-fill-simple" style="width: <%= (amount / total * 100).round(2) %>%"></div>
+            </div>
+            <small class="text-muted mt-2 d-block">
+              <%= number_with_precision((amount / total * 100), precision: 1) %>% of total spending
+            </small>
           </div>
         <% end %>
-      </div>
+      <% else %>
+        <div class="empty-state-simple">
+          <i class="fas fa-chart-pie"></i>
+          <h4>No expenses yet</h4>
+          <p>Start tracking your expenses by adding your first receipt</p>
+        </div>
+      <% end %>
     </div>
   </div>
 
   <div class="col-lg-6 mb-4">
-    <div class="section-card">
-      <div class="card-header">
-        <h5><i class="fas fa-history"></i> Recent Receipts</h5>
-      </div>
-      <div class="card-body">
-        <% if @recent_receipts.any? %>
-          <% @recent_receipts.each do |receipt| %>
-            <div class="receipt-item">
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="flex-grow-1">
-                  <div class="receipt-merchant">
-                    <i class="fas fa-store"></i> <%= receipt.merchant %>
-                  </div>
-                  <div class="receipt-date">
-                    <i class="far fa-calendar-alt"></i> <%= receipt.date.strftime('%B %d, %Y') %>
-                  </div>
-                </div>
-                <div class="receipt-amount">
-                  $<%= number_with_precision(receipt.amount, precision: 2) %>
-                </div>
+    <div class="content-card">
+      <h3 class="card-title-simple">
+        <i class="fas fa-history"></i>
+        Recent Activity
+      </h3>
+
+      <% if @recent_receipts.any? %>
+        <% @recent_receipts.each do |receipt| %>
+          <div class="receipt-card">
+            <div class="receipt-info">
+              <h5><i class="fas fa-store"></i> <%= receipt.merchant %></h5>
+              <div class="receipt-date-simple">
+                <i class="far fa-calendar"></i> <%= receipt.date.strftime('%b %d, %Y') %>
               </div>
             </div>
-          <% end %>
-        <% else %>
-          <div class="empty-state">
-            <i class="fas fa-receipt"></i>
-            <p>No receipts yet</p>
-            <small>Upload your first receipt to get started</small>
+            <div class="receipt-amount-simple">
+              $<%= number_with_precision(receipt.amount, precision: 2) %>
+            </div>
           </div>
         <% end %>
-      </div>
+      <% else %>
+        <div class="empty-state-simple">
+          <i class="fas fa-receipt"></i>
+          <h4>No receipts yet</h4>
+          <p>Upload your first receipt to get started</p>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
 
-<% if @expenses_by_category.any? %>
-  <div class="row">
-    <div class="col-12">
-      <div class="section-card">
-        <div class="card-header">
-          <h5><i class="fas fa-chart-bar"></i> Quick Insights</h5>
-        </div>
-        <div class="card-body">
-          <div class="row text-center">
-            <div class="col-md-4 mb-3">
-              <div class="p-3">
-                <i class="fas fa-trophy text-warning" style="font-size: 2rem;"></i>
-                <h4 class="mt-2">
-                  <%= @expenses_by_category.max_by { |_, amount| amount }[0] %>
-                </h4>
-                <p class="text-muted mb-0">Top Spending Category</p>
-              </div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <div class="p-3">
-                <i class="fas fa-calculator text-info" style="font-size: 2rem;"></i>
-                <h4 class="mt-2">
-                  $<%= number_with_precision(@total_expenses / [@expenses_by_category.count, 1].max, precision: 2) %>
-                </h4>
-                <p class="text-muted mb-0">Average per Category</p>
-              </div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <div class="p-3">
-                <i class="fas fa-percentage text-success" style="font-size: 2rem;"></i>
-                <h4 class="mt-2">
-                  <%= number_with_precision((@expenses_by_category.max_by { |_, amount| amount }[1] / @total_expenses * 100), precision: 1) %>%
-                </h4>
-                <p class="text-muted mb-0">Of Total Expenses</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-<% end %>
-
-<div class="action-buttons text-center">
-  <a href="#" class="btn btn-action primary text-white me-3">
-    <i class="fas fa-plus-circle"></i> Add New Receipt
+<div class="actions-row">
+  <a href="#" class="action-btn primary">
+    <i class="fas fa-plus-circle"></i>
+    <span>Add Receipt</span>
   </a>
-  <a href="#" class="btn btn-action outline">
-    <i class="fas fa-list-ul"></i> View All Expenses
-  </a>
+  <%= link_to expenses_path, class: "action-btn secondary" do %>
+    <i class="fas fa-list"></i>
+    <span>View All Expenses</span>
+  <% end %>
 </div>
